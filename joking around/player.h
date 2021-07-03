@@ -11,12 +11,12 @@ private:
 
 public:
 	static int* getMaxPlayer();
-	static player* getPlayer(int index);
+	static player* getPlayer(int);
 
 	int* getHealth();
 	int* getTeam();
 	vector3* getOrigin();
 	vector3* getViewOffset();
-	vector3* getBonePos(int boneID);
+	vector3* getBonePos(int);
 
 };

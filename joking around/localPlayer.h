@@ -1,6 +1,5 @@
 #pragma once
-
-class vector3;
+#include "vector3.h"
 
 class localPlayer {
 
@@ -12,8 +11,11 @@ public:
 
 	vector3* getOrigin();
 	vector3* getViewOffset();
+	vector3* aimPunchAngle();
+	int* iShotsFired();
 	int* getHealth();
 	int* getTeam();
-	void aimAt(vector3* target);
 	float getDistance(vector3*);
+
+	void aimAt(vector3*);
 };

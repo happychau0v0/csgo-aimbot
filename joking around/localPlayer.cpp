@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <Windows.h>
 #include <math.h>
+#include <iostream>
 
 localPlayer* localPlayer::get() {
 	static uint32_t clientModule = (uint32_t)(GetModuleHandle("client.dll"));
@@ -36,6 +37,8 @@ float localPlayer::getDistance(vector3* other) {
 }
 
 const double PI = 3.14159265359;
+static vector3 oPunch, recoil;
+float cooldown = 1;
 
 void localPlayer::aimAt(vector3* target) {
 	static uint32_t engineModule = (uint32_t)GetModuleHandle("engine.dll");
@@ -45,14 +48,39 @@ void localPlayer::aimAt(vector3* target) {
 	vector3 viewOffset = *getViewOffset();
 	vector3* myPos = &(origin + viewOffset);
 
-	vector3 delta(target->x - myPos->x, target->y - myPos->y, target->z - myPos->z);
+	vector3 delta = *target - *myPos;
 	float len = sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
 
-	float pitch = -asin(delta.z / len) * 180 / PI;
-	float yaw = atan2(delta.y, delta.x) * 180 / PI;
+	vector3 change(-asin(delta.z / len) * 180 / PI, atan2(delta.y, delta.x) * 180 / PI, 0);
+	change = change - *viewAngles;
 
-	if (pitch >= -89 && pitch <= 89 && yaw >= -180 && yaw <= 180) {
-		viewAngles->x = pitch;
-		viewAngles->y = yaw;
+	vector3 punchAngle = *aimPunchAngle() * 2;
+
+	if (*iShotsFired() > 1) {
+		recoil = recoil + oPunch - punchAngle;
+		cooldown = 1;
 	}
+	else {
+		recoil = recoil * pow(cooldown, 2.65);
+		if (cooldown > 0.1) cooldown -= 0.0007;
+	}
+
+	recoil.normalize();
+	change = change + recoil;
+	change.normalize();
+
+	//std::cout << recoil.x << ' ' << recoil.y << ' ' << recoil.z << std::endl;
+
+	oPunch = punchAngle;
+
+	if (GetAsyncKeyState(VK_LBUTTON)) *viewAngles = *viewAngles + change;
+	
+}
+
+vector3* localPlayer::aimPunchAngle() {
+	return (vector3*)(*(uintptr_t*)this + hazedumper::netvars::m_aimPunchAngle);
+}
+
+int* localPlayer::iShotsFired() {
+	return (int*)(*(uintptr_t*)this + hazedumper::netvars::m_iShotsFired);
 }

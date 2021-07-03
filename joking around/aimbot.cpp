@@ -34,7 +34,6 @@ player* getClosestEnemy() {
 
 void aimbot() {
 	player* closestEnemy = getClosestEnemy();
-
 	if (closestEnemy) {
 		localPlayer::get()->aimAt(closestEnemy->getBonePos(8));
 	}

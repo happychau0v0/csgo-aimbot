@@ -71,9 +71,7 @@ DWORD WINAPI MainThread(LPVOID param) // our main thread
 		DirectXDevice = **(DWORD**)(FindPattern("shaderapidx9.dll", "A1 ?? ?? ?? ?? 50 8B 08 FF 51 0C") + 0x1); // geting the device by patternscaning
 
 	void** pVTable = *reinterpret_cast<void***>(DirectXDevice); // getting the vtable array
-	oEndScene = (f_EndScene)DetourFunction((PBYTE)pVTable[42], (PBYTE)Hooked_EndScene); // hooking the endscene and putting a jump to our function and then storing original in oEndscene
-
-	static localPlayer* me = me->get();
+	oEndScene = (f_EndScene)DetourFunction((PBYTE)pVTable[42], (PBYTE)Hooked_EndScene); // hooking the endscene and putting a jump to our function and then storing original in 
 
 	while (1) {
 		if (GetAsyncKeyState(VK_DELETE)) {
@@ -81,7 +79,9 @@ DWORD WINAPI MainThread(LPVOID param) // our main thread
 			break;
 		}
 		Sleep(10);
-		if (aimlock && GetAsyncKeyState(VK_LBUTTON)) {
+		if (GetAsyncKeyState(VK_XBUTTON1)) aimlock = 1;
+		if (GetAsyncKeyState(VK_XBUTTON2)) aimlock = 0;
+		if (aimlock) {
 			aimbot();
 		}
 	}
@@ -151,7 +151,7 @@ bool CheckBox(int x, int y, bool var, std::string Name, IDirect3DDevice9* pDevic
 	return var;
 }
 
-const std::string menuName = "GG";
+const std::string menuName = "joking around";
 
 void DrawMenu(IDirect3DDevice9* pDevice) {
 	static POINT Mouse;
@@ -175,6 +175,5 @@ void DrawMenu(IDirect3DDevice9* pDevice) {
 		WriteText(menuName.c_str(), MenuX, MenuY - 17, 200, 14, White);
 
 		aimlock = CheckBox(MenuX + 5, MenuY + 5, aimlock, "aimbot", pDevice, Mouse);
-
 	}
 }

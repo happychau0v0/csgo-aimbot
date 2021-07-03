@@ -33,6 +33,7 @@
     <ClCompile Include="Patternscanning.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="aimbot.cpp" />
+    <ClCompile Include="vector3.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
